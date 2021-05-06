@@ -10,9 +10,12 @@ The first motivation of this project is to enable interactions on thermal printe
 
 in the console:
 
-`npm install`
+```
+npm install
+npm start
+```
 
-`npm run`
+
 
 ### Using the installer (for windows)
 
