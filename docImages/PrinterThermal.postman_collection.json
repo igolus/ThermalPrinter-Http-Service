@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "613e7a15-c89e-4bef-b3d9-b107bf56556c",
+		"name": "PrinterThermal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "print",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"moment = require('moment')\r",
+							"pm.environment.set(\"currentDate\", moment().format());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {\r\n        \"currentDate\": \"{{currentDate}}\"\r\n    },\r\n    \"headerScript\" : \"printer.bold(true)\\n printer.println(data.currentDate)\\n\",\r\n    \"bodyScript\" : \"printer.println(\\\"TEST\\\")\\n\",\r\n    \"footerScript\" : \"printer.println(\\\"FOOTER\\\")\\n\",\r\n    \"model\": \"EPSON\",\r\n    \"urlPrinter\": \"tcp://127.0.0.1:9100\"\r\n\r\n}"
+				},
+				"url": "http://localhost:3005/printThermal"
+			},
+			"response": []
+		}
+	]
+}
