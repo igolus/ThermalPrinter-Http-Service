@@ -1,0 +1,557 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <!-- http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
+  <Product Id="4D7EDBC0-1847-4371-BEA6-39553331A603" 
+           UpgradeCode="bbc05099-3278-4889-83d7-4340797da705"
+           Name = "expressthermalelectronApp (Machine - MSI)"
+           Version="1.1.2.0"
+           Manufacturer="La toque magique"
+           Language="1033">
+    <!-- Only run this installer on Windows 7 or up (or if it"s already installed, I guess) -->
+    <!-- <Condition Message="This application is only supported on Windows 7 or higher.">
+      <![CDATA[Installed OR (VersionNT >= 601)]]>
+    </Condition> -->
+    <!-- http://wixtoolset.org/documentation/manual/v3/xsd/wix/package.html -->
+    <Package InstallerVersion="405"
+             Compressed="yes"
+             Comments="Windows Installer Package"
+             Platform="x86"/>
+    <!-- Don't allow downgrades -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A later version of this product is already installed. Setup will now exit."/>
+    <!-- This will hide our Uninstall entry in Apps & Features. We doing this so
+    we can write our own which we can better control. -->
+    <Property Id="ARPSYSTEMCOMPONENT" Value="1" />
+    <!-- While the MSI package is hidden in Apps & Features, it can still be queried
+    via PowerShell and other means. To differentiate we give the public entry a slightly
+    different name to make admins life easier.  -->
+    <Property Id="VisibleProductName" Value="expressthermalelectronApp (Machine)" />
+    <!-- Signals Single Package Authoring. This pacakge can pe installed perMachine
+    or perUser. The mode is determined by the property below. -->
+    <Property Id="ALLUSERS" Secure="yes" Value="2" />
+    <!-- Tells the package to install perUser or perMachine. In case of perUser, all
+    files will be redirected to the user profile and all registry entries to HKCU. -->
+    <Property Id="MSIINSTALLPERUSER" Secure="yes" Value="0" />
+    <!-- Overides the default install mode. It solves a problem where
+    individual packaged files that have the same version as in previous
+    installed App version will be deleted if the files are in use during
+    this upgrade. Unfortunately this causes an ICE 40 warning during linking. -->
+    <Property Id="REINSTALLMODE" Value="emus" />
+    <!-- Overrides the default reboot behavior if files are in use during the upgrade.
+    By default, this will be set to "ReallySuppress" to make sure no unexpected reboot will happpen.-->
+    <Property Id="REBOOT" Value="ReallySuppress" />
+    <!-- Installlation level to use that determines which features are installed.
+    see guides/enduser.md to check which Install Level maps to which feature that will
+    correspondingly get installed.
+    If not set, this will default to "2" (Main Feature, Launch On Login) -->
+    <Property Id="INSTALLLEVEL" Value="2" />
+    <!-- Allows to customize the Windows user group that gets access rights on
+    the install folder in cas the auto-updater is installed. User that run the App
+    must be part of that user group to be able to auto-update. -->
+    <Property Id="UPDATERUSERGROUP" Value="Users" />
+    <!-- A property to define whether the auto-updater is enabled when the
+    feature gets installed. This way the update can be installed but also be disabled
+    by overwriting the default value.  -->
+    <Property Id="AUTOUPDATEENABLED" Value="1" />
+    <!-- Necessary registry search to find the install path which is used by the
+    PurgeOnUninstall action. Since this package can be installed perUser or perMachine,
+    we have to look in both places. First successful search wins. -->
+    <Property Id="INSTALLPATH">
+      <RegistrySearch Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq"
+                      Root="HKCU" 
+                      Type="raw"
+                      Id="INSTALLPATH_REGSEARCH_HKCU"
+                      Name="InstallPath"
+                      Win64="no"/>
+      <RegistrySearch Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq"
+                      Root="HKLM" 
+                      Type="raw"
+                      Id="INSTALLPATH_REGSEARCH_HKLM"
+                      Name="InstallPath"
+                      Win64="no"/>
+    </Property>
+    <!-- Lets change the product name depending on the perUser installMode. 
+    This way the user and admins can see in which scope the MSI was installed. -->
+    <SetProperty Action="SetVisibleProductName" Id="VisibleProductName" Sequence="both" Before="AppSearch"  Value="expressthermalelectronApp (User)">
+      <![CDATA[MSIINSTALLPERUSER = "1"]]>
+    </SetProperty>
+    <!-- Again we give thee MSI generaten entry a slightly different name to help 
+    differentiate between the public one and the invisible one. -->
+    <SetProperty Action="SetProductName" Id="ProductName" Sequence="both" Before="AppSearch"  Value="expressthermalelectronApp (User - MSI)">
+      <![CDATA[MSIINSTALLPERUSER = "1"]]>
+    </SetProperty>
+
+    <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
+
+
+
+    <!-- Step 2: Add files and directories -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+       <!-- Installation files to %PROGRAMFILES% -->
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="APPLICATIONROOTDIRECTORY" Name="expressthermalelectronApp">
+          <Directory Id="__99bb02be_a564_49e7_a1f3_0a497fbdb3b5" Name="app-1.1.2">
+            <Directory Id="_locales_f90f433d_c87b_40c7_ba19_b92a4469fb71" Name="locales">
+              <Component Id="_locales_am.pak_a45173ea_41d1_4641_b673_da6ba4913bd4" Guid="6d4d7f3c-4bfa-445f-839b-add6aedc25e9" Win64="no">
+                <File Name="am.pak" Id="_locales_am.pak_a45173ea_41d1_4641_b673_da6ba4913bd4" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\am.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ar.pak_b58d44ed_dbf1_44c4_9219_ff9dc7708c3b" Guid="54db06bd-bca7-4179-9c5e-22965978c478" Win64="no">
+                <File Name="ar.pak" Id="_locales_ar.pak_b58d44ed_dbf1_44c4_9219_ff9dc7708c3b" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ar.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_bg.pak_406afea7_6b3c_4205_9187_231b4478797e" Guid="fbf202bd-6377-4ac5-9f97-66fb49c93e81" Win64="no">
+                <File Name="bg.pak" Id="_locales_bg.pak_406afea7_6b3c_4205_9187_231b4478797e" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\bg.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_bn.pak_53b69c37_473a_4122_a574_741cd4c5fe95" Guid="483d02c1-f76f-46a5-be4c-8657708b98df" Win64="no">
+                <File Name="bn.pak" Id="_locales_bn.pak_53b69c37_473a_4122_a574_741cd4c5fe95" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\bn.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ca.pak_d9b69670_89eb_455c_bf54_bb68ad0bc5ae" Guid="03d7d4a5-be32-4ad8-b6b8-08b492643a1a" Win64="no">
+                <File Name="ca.pak" Id="_locales_ca.pak_d9b69670_89eb_455c_bf54_bb68ad0bc5ae" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ca.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_cs.pak_2b45cada_859d_4e72_bf9c_d2bf720bcf22" Guid="98a76d78-685e-4e93-87b8-cec4bd69fc81" Win64="no">
+                <File Name="cs.pak" Id="_locales_cs.pak_2b45cada_859d_4e72_bf9c_d2bf720bcf22" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\cs.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_da.pak_7ec3b97a_c6e5_4ec0_b002_2a470ae75045" Guid="0632be8a-4d1d-43d1-a5d2-e6196fd9575e" Win64="no">
+                <File Name="da.pak" Id="_locales_da.pak_7ec3b97a_c6e5_4ec0_b002_2a470ae75045" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\da.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_de.pak_49358027_e1bc_42e4_8c71_9f927eaf3ce9" Guid="6e5a7540-5a56-410a-bafb-9cf8234138c5" Win64="no">
+                <File Name="de.pak" Id="_locales_de.pak_49358027_e1bc_42e4_8c71_9f927eaf3ce9" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\de.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_el.pak_e62fcf64_8026_4d42_95d7_b835cf842583" Guid="4888558c-00b4-47ac-93d2-92972d706575" Win64="no">
+                <File Name="el.pak" Id="_locales_el.pak_e62fcf64_8026_4d42_95d7_b835cf842583" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\el.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_en_GB.pak_c27c2ff7_32ed_4cd6_8283_f2959aa39eaa" Guid="833b6290-a6c1-4515-8617-f8961a47b652" Win64="no">
+                <File Name="en-GB.pak" Id="_locales_en_GB.pak_c27c2ff7_32ed_4cd6_8283_f2959aa39eaa" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\en-GB.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_en_US.pak_9d1d80bb_1e69_442c_96dd_f10022a2142c" Guid="f34e5f7c-b933-4490-be6e-f98c83b43dca" Win64="no">
+                <File Name="en-US.pak" Id="_locales_en_US.pak_9d1d80bb_1e69_442c_96dd_f10022a2142c" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\en-US.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_es_419.pak_40ec788b_333b_4fe5_8ef7_d34ae60f2859" Guid="48ce8276-3052-4bb5-9381-ec99cbde158c" Win64="no">
+                <File Name="es-419.pak" Id="_locales_es_419.pak_40ec788b_333b_4fe5_8ef7_d34ae60f2859" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\es-419.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_es.pak_f539d662_6b44_4b68_b339_3e725ebeab5b" Guid="29202390-03db-48ac-9e9e-69aa48368d1b" Win64="no">
+                <File Name="es.pak" Id="_locales_es.pak_f539d662_6b44_4b68_b339_3e725ebeab5b" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\es.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_et.pak_6073f788_a680_43ae_a401_cec14b7ddca5" Guid="d7440435-5880-4262-8cc2-69314eed0d14" Win64="no">
+                <File Name="et.pak" Id="_locales_et.pak_6073f788_a680_43ae_a401_cec14b7ddca5" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\et.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_fa.pak_0100105a_f654_4487_9306_fc62f68675e6" Guid="23065f82-7c52-4778-9073-673c12ebdf00" Win64="no">
+                <File Name="fa.pak" Id="_locales_fa.pak_0100105a_f654_4487_9306_fc62f68675e6" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\fa.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_fi.pak_e2522fe8_1381_4c4d_a2d6_ab36db021722" Guid="d93b721d-43ef-43ae-9210-66e00f3bf7c5" Win64="no">
+                <File Name="fi.pak" Id="_locales_fi.pak_e2522fe8_1381_4c4d_a2d6_ab36db021722" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\fi.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_fil.pak_6d1105f2_52c3_47cb_ba7f_f08e05513597" Guid="4bee7d12-aa4c-430d-a029-f48305e428de" Win64="no">
+                <File Name="fil.pak" Id="_locales_fil.pak_6d1105f2_52c3_47cb_ba7f_f08e05513597" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\fil.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_fr.pak_bbef47ac_861e_4c46_9d2e_67ed266e38a7" Guid="10dba250-bde1-454a-9f7c-8bf7c32a0adb" Win64="no">
+                <File Name="fr.pak" Id="_locales_fr.pak_bbef47ac_861e_4c46_9d2e_67ed266e38a7" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\fr.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_gu.pak_7e1ce3e9_ae50_403c_b0a4_5563f727482b" Guid="820eb8cd-25e0-471b-a643-076e19a7fd0f" Win64="no">
+                <File Name="gu.pak" Id="_locales_gu.pak_7e1ce3e9_ae50_403c_b0a4_5563f727482b" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\gu.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_he.pak_e1460cdb_98a3_483f_8335_23810d27460e" Guid="81867809-8b94-4b74-86f3-ebe1bf5870d9" Win64="no">
+                <File Name="he.pak" Id="_locales_he.pak_e1460cdb_98a3_483f_8335_23810d27460e" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\he.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_hi.pak_bf6c20ec_d59c_49be_a7d9_155cb00f4910" Guid="4093268f-26c3-4d11-a45d-562e67d74680" Win64="no">
+                <File Name="hi.pak" Id="_locales_hi.pak_bf6c20ec_d59c_49be_a7d9_155cb00f4910" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\hi.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_hr.pak_0ef467ba_3125_41e2_b41b_c37984d95d52" Guid="b58d14dc-cf09-458e-a428-8b62dc77fee2" Win64="no">
+                <File Name="hr.pak" Id="_locales_hr.pak_0ef467ba_3125_41e2_b41b_c37984d95d52" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\hr.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_hu.pak_36141b0d_a377_43dc_aabf_fc8054bcafda" Guid="63f1f0a0-2ed1-4886-97d8-52ac0c6055fa" Win64="no">
+                <File Name="hu.pak" Id="_locales_hu.pak_36141b0d_a377_43dc_aabf_fc8054bcafda" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\hu.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_id.pak_9a70b088_a16f_49ed_b1be_988bc6d1144d" Guid="fe2623be-94ff-4a07-9978-925011ec188e" Win64="no">
+                <File Name="id.pak" Id="_locales_id.pak_9a70b088_a16f_49ed_b1be_988bc6d1144d" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\id.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_it.pak_5b543a73_4ea8_4a70_8988_35bd62b68604" Guid="fed0215c-3abb-417d-953e-c3011ed2bfa8" Win64="no">
+                <File Name="it.pak" Id="_locales_it.pak_5b543a73_4ea8_4a70_8988_35bd62b68604" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\it.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ja.pak_d4c99cdb_1ea3_4dc4_929f_390a656ce508" Guid="88e7a97b-7955-447e-833c-9c873755c5b9" Win64="no">
+                <File Name="ja.pak" Id="_locales_ja.pak_d4c99cdb_1ea3_4dc4_929f_390a656ce508" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ja.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_kn.pak_7e7a5155_1964_4c1e_8184_6c8b80634ee1" Guid="b787a19a-c148-471b-af1b-8219e5fe845c" Win64="no">
+                <File Name="kn.pak" Id="_locales_kn.pak_7e7a5155_1964_4c1e_8184_6c8b80634ee1" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\kn.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ko.pak_d3dbc5e9_c508_46f1_bc80_c36972b57de2" Guid="c208f78c-37e0-4ba2-998b-235bf60a1f05" Win64="no">
+                <File Name="ko.pak" Id="_locales_ko.pak_d3dbc5e9_c508_46f1_bc80_c36972b57de2" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ko.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_lt.pak_af198ca2_f8fb_4b54_a039_39dd3d3508b8" Guid="c6137e6d-8043-432b-9d12-0829f5b1d4c0" Win64="no">
+                <File Name="lt.pak" Id="_locales_lt.pak_af198ca2_f8fb_4b54_a039_39dd3d3508b8" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\lt.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_lv.pak_a023db32_7a35_49ae_96f0_ebf566713f00" Guid="433703a0-646c-4eb3-aed7-9a65cb066846" Win64="no">
+                <File Name="lv.pak" Id="_locales_lv.pak_a023db32_7a35_49ae_96f0_ebf566713f00" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\lv.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ml.pak_3ff5c591_8379_48ad_bd78_e7c2d6823cfc" Guid="ff994f1b-a090-44c2-8ac9-6d9c647a7754" Win64="no">
+                <File Name="ml.pak" Id="_locales_ml.pak_3ff5c591_8379_48ad_bd78_e7c2d6823cfc" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ml.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_mr.pak_c66edc6c_51ea_47a8_805d_624df4e79c0f" Guid="d9a6d115-20ff-4b5e-9c2a-0e617c611db5" Win64="no">
+                <File Name="mr.pak" Id="_locales_mr.pak_c66edc6c_51ea_47a8_805d_624df4e79c0f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\mr.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ms.pak_24713741_a5c6_4d2e_be2b_b32b69ba9ffe" Guid="2518d758-43ee-42a1-a4af-b2076686f208" Win64="no">
+                <File Name="ms.pak" Id="_locales_ms.pak_24713741_a5c6_4d2e_be2b_b32b69ba9ffe" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ms.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_nb.pak_cf5a0b48_dd8c_44a7_91df_b38a19e7ade7" Guid="936142fe-a51f-404d-93c9-1c96e096bb5f" Win64="no">
+                <File Name="nb.pak" Id="_locales_nb.pak_cf5a0b48_dd8c_44a7_91df_b38a19e7ade7" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\nb.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_nl.pak_4dc00565_731c_4d69_b438_d118f373f8a2" Guid="3045458a-2a5d-4fd8-afe9-5ee2a79c1b1e" Win64="no">
+                <File Name="nl.pak" Id="_locales_nl.pak_4dc00565_731c_4d69_b438_d118f373f8a2" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\nl.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_pl.pak_d72bc7d9_b505_4b61_bc58_b8c9b23d8d54" Guid="c463ad50-9a76-4c0b-81f4-7763c15549ee" Win64="no">
+                <File Name="pl.pak" Id="_locales_pl.pak_d72bc7d9_b505_4b61_bc58_b8c9b23d8d54" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\pl.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_pt_BR.pak_7b677117_3346_471b_b356_2b891b080fa6" Guid="ca8663a5-a958-4357-8865-905a7f320f3c" Win64="no">
+                <File Name="pt-BR.pak" Id="_locales_pt_BR.pak_7b677117_3346_471b_b356_2b891b080fa6" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\pt-BR.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_pt_PT.pak_da96687f_6fcc_4626_9ee0_2c67a37a2dff" Guid="9de21440-cb51-41bd-84ac-dd94ef47899d" Win64="no">
+                <File Name="pt-PT.pak" Id="_locales_pt_PT.pak_da96687f_6fcc_4626_9ee0_2c67a37a2dff" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\pt-PT.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ro.pak_4894da53_6936_49a1_93ba_046884113c7f" Guid="fb12fc64-6e5d-4bcb-95aa-2e049006020c" Win64="no">
+                <File Name="ro.pak" Id="_locales_ro.pak_4894da53_6936_49a1_93ba_046884113c7f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ro.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ru.pak_caf2b777_35f4_478a_bccf_c085ccfb17e0" Guid="8776c37e-2f41-4238-8b82-bb71403c43a4" Win64="no">
+                <File Name="ru.pak" Id="_locales_ru.pak_caf2b777_35f4_478a_bccf_c085ccfb17e0" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ru.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_sk.pak_747d0506_d28c_44bc_a41d_a4e7aaadc588" Guid="753cf7c1-9484-47b4-a28e-ed1ec35c3b17" Win64="no">
+                <File Name="sk.pak" Id="_locales_sk.pak_747d0506_d28c_44bc_a41d_a4e7aaadc588" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\sk.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_sl.pak_3c8e0ac9_c2a7_4a45_b221_b588fd38f930" Guid="519cbb7d-a7fa-4d3a-bef4-a7c213243f03" Win64="no">
+                <File Name="sl.pak" Id="_locales_sl.pak_3c8e0ac9_c2a7_4a45_b221_b588fd38f930" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\sl.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_sr.pak_a9077f9f_3e34_4885_91fe_7f0741f73024" Guid="6bef4d88-081b-4379-bee5-82122b2d3425" Win64="no">
+                <File Name="sr.pak" Id="_locales_sr.pak_a9077f9f_3e34_4885_91fe_7f0741f73024" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\sr.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_sv.pak_b1717823_2f32_479f_9da4_b092e04a28ae" Guid="194cbd3e-28d5-49f7-83ea-5273c6ea6bdd" Win64="no">
+                <File Name="sv.pak" Id="_locales_sv.pak_b1717823_2f32_479f_9da4_b092e04a28ae" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\sv.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_sw.pak_2744cad1_1652_4d33_b8e1_d20ba8fc80ae" Guid="96fa196e-624e-4c8e-9852-288859aa7af2" Win64="no">
+                <File Name="sw.pak" Id="_locales_sw.pak_2744cad1_1652_4d33_b8e1_d20ba8fc80ae" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\sw.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_ta.pak_c665d5d7_b426_4dd1_88c3_40d5006bc27f" Guid="a562bd37-2d74-4def-bfc4-cd9c687aa7d1" Win64="no">
+                <File Name="ta.pak" Id="_locales_ta.pak_c665d5d7_b426_4dd1_88c3_40d5006bc27f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\ta.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_te.pak_30b79719_6a96_4245_9b0c_d5d1edf260d0" Guid="cbf4f01a-eaeb-4cb3-b5cc-7d949ebfcb50" Win64="no">
+                <File Name="te.pak" Id="_locales_te.pak_30b79719_6a96_4245_9b0c_d5d1edf260d0" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\te.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_th.pak_38bec22c_5611_4fc6_a7f5_c6f153acc04a" Guid="3e1aaa56-223a-4f12-b165-7a32b2a154a6" Win64="no">
+                <File Name="th.pak" Id="_locales_th.pak_38bec22c_5611_4fc6_a7f5_c6f153acc04a" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\th.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_tr.pak_d0e33510_c177_41b6_8df3_9a9f0dd22787" Guid="60816594-10db-4a04-ad1c-9588129f928c" Win64="no">
+                <File Name="tr.pak" Id="_locales_tr.pak_d0e33510_c177_41b6_8df3_9a9f0dd22787" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\tr.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_uk.pak_8ea74855_9618_4835_8135_a1fc0a6db7ce" Guid="961571c5-c6ec-45b7-9e90-7be9ad2bc382" Win64="no">
+                <File Name="uk.pak" Id="_locales_uk.pak_8ea74855_9618_4835_8135_a1fc0a6db7ce" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\uk.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_vi.pak_2a0ee1ee_5301_4c8e_a786_09a83d1b26e0" Guid="56ee82c2-914b-472d-ab4d-d1798fbb434c" Win64="no">
+                <File Name="vi.pak" Id="_locales_vi.pak_2a0ee1ee_5301_4c8e_a786_09a83d1b26e0" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\vi.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_zh_CN.pak_38fab54a_de57_4343_8ebf_1cbf45693d55" Guid="6e9ee8d1-25a5-42e4-aba4-1cc7f9399ddf" Win64="no">
+                <File Name="zh-CN.pak" Id="_locales_zh_CN.pak_38fab54a_de57_4343_8ebf_1cbf45693d55" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\zh-CN.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_locales_zh_TW.pak_20fc158e_2eed_470a_aa1b_59ab4e7b942b" Guid="964d3270-9a0d-4200-958e-1f67da3575b9" Win64="no">
+                <File Name="zh-TW.pak" Id="_locales_zh_TW.pak_20fc158e_2eed_470a_aa1b_59ab4e7b942b" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\locales\zh-TW.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+            </Directory>
+            <Directory Id="_resources_ed903f16_34e4_4491_902e_18d306e03a11" Name="resources">
+              <Directory Id="_resources_app_aa031556_cc32_41ce_a467_1c0b415ae7b2" Name="app">
+                <Directory Id="_resources_app_.idea_9bdc6fcf_540e_4f84_a72b_2cb8ae57f2d6" Name=".idea">
+                  <Component Id="_expressThermalElectron.iml_17fa49f4_2cf6_4807_93e6_72b80ab60777" Guid="0660dad9-32b9-4b06-af2e-64ff469435f4" Win64="no">
+                    <File Name="expressThermalElectron.iml" Id="_expressThermalElectron.iml_17fa49f4_2cf6_4807_93e6_72b80ab60777" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\.idea\expressThermalElectron.iml" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                  </Component>
+                  <Component Id="_resources_app_.idea_modules.xml_bcfaa0fc_19a7_4d22_9363_2c48a05d248f" Guid="3f626428-a7cf-4d4a-9c3f-cf82142401a2" Win64="no">
+                    <File Name="modules.xml" Id="_resources_app_.idea_modules.xml_bcfaa0fc_19a7_4d22_9363_2c48a05d248f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\.idea\modules.xml" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                  </Component>
+                  <Component Id="_resources_app_.idea_vcs.xml_9c486f13_3296_4ace_b1ae_449a35beca74" Guid="ccf532d2-6c0d-4c43-b69b-b33f68daa964" Win64="no">
+                    <File Name="vcs.xml" Id="_resources_app_.idea_vcs.xml_9c486f13_3296_4ace_b1ae_449a35beca74" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\.idea\vcs.xml" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                  </Component>
+                  <Component Id="_resources_app_.idea_workspace.xml_ca3baf2d_e5a2_41dd_9b70_27de83336b5d" Guid="76f77cc5-5a7c-45a6-9399-b2c3c6f2b2c5" Win64="no">
+                    <File Name="workspace.xml" Id="_resources_app_.idea_workspace.xml_ca3baf2d_e5a2_41dd_9b70_27de83336b5d" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\.idea\workspace.xml" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                  </Component>
+                </Directory>
+                <Directory Id="_resources_app_node_modules_37e47d59_79bb_4300_8191_272ac4d91ad4" Name="node_modules">
+                  <Directory Id="__electron_6bf2a523_6c2d_459b_84fb_92b5b391597a" Name="@electron">
+
+                  </Directory>
+                  <Directory Id="__sindresorhus_0ddfabc8_d69a_4bb0_9d71_33455dee91c1" Name="@sindresorhus">
+
+                  </Directory>
+                  <Directory Id="__szmarczak_b1d3b535_5262_485c_9add_8aa098853b42" Name="@szmarczak">
+
+                  </Directory>
+                  <Directory Id="_resources_app_node_modules__types_2d1e9e0a_80a7_462b_90bb_e764e8a4fa8c" Name="@types">
+
+                  </Directory>
+                </Directory>
+                <Component Id="_resources_app_index.html_2bccd3ca_171c_4c62_aaf0_dbc455193d87" Guid="d674b611-5032-4c74-b645-286fd5b5f3c8" Win64="no">
+                  <File Name="index.html" Id="_resources_app_index.html_2bccd3ca_171c_4c62_aaf0_dbc455193d87" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\index.html" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                </Component>
+                <Component Id="_resources_app_main.js_f26a98a0_b8ab_4f49_b28e_95ed98a92c00" Guid="1b0ad5a1-0529-4b42-bf99-62361a634980" Win64="no">
+                  <File Name="main.js" Id="_resources_app_main.js_f26a98a0_b8ab_4f49_b28e_95ed98a92c00" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\main.js" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                </Component>
+                <Component Id="_resources_app_package.json_40f1c215_4805_47e2_a856_85138ecd1a67" Guid="49fc76b4-e65c-4c66-a57a-6aaec0747790" Win64="no">
+                  <File Name="package.json" Id="_resources_app_package.json_40f1c215_4805_47e2_a856_85138ecd1a67" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\package.json" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                </Component>
+                <Component Id="_resources_app_preload.js_00251420_a718_43b6_b428_07b809b28aa3" Guid="d8ea741f-ba23-495f-b644-95ae9fd3afab" Win64="no">
+                  <File Name="preload.js" Id="_resources_app_preload.js_00251420_a718_43b6_b428_07b809b28aa3" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources\app\preload.js" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+                </Component>
+              </Directory>
+
+            </Directory>
+
+            <Directory Id="_swiftshader_a7c8e8e1_bc68_4536_9c50_fdf725da4717" Name="swiftshader">
+              <Component Id="_swiftshader_libEGL.dll_8023a9ce_b145_4b38_82d7_786cb848265f" Guid="2b63d2c5-d70a-4345-8697-a843d9b03cff" Win64="no">
+                <File Name="libEGL.dll" Id="_swiftshader_libEGL.dll_8023a9ce_b145_4b38_82d7_786cb848265f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\swiftshader\libEGL.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+              <Component Id="_swiftshader_libGLESv2.dll_e033cfbe_77e5_4df5_b6a8_44ae38b988a4" Guid="491584a3-f7e9-4729-8e14-f8498400a243" Win64="no">
+                <File Name="libGLESv2.dll" Id="_swiftshader_libGLESv2.dll_e033cfbe_77e5_4df5_b6a8_44ae38b988a4" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\swiftshader\libGLESv2.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+              </Component>
+            </Directory>            <Component Id="_LICENSE_f3a6f2c6_9933_40f8_91ff_e2680fab85e2" Guid="e3cf4ea3-7153-4a50-a10d-8f3d505a4713" Win64="no">
+              <File Name="LICENSE" Id="_LICENSE_f3a6f2c6_9933_40f8_91ff_e2680fab85e2" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\LICENSE" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_LICENSES.chromium.html_7151f1f9_9300_486b_8f68_2d692958d6f0" Guid="eb2b490e-7a29-4f82-8cfe-3dfd3ee9d85b" Win64="no">
+              <File Name="LICENSES.chromium.html" Id="_LICENSES.chromium.html_7151f1f9_9300_486b_8f68_2d692958d6f0" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\LICENSES.chromium.html" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_chrome_100_percent.pak_51fe8383_838a_498d_a8ca_e776d246ea38" Guid="bf78d022-fb38-41f1-8fac-40f3c40e626d" Win64="no">
+              <File Name="chrome_100_percent.pak" Id="_chrome_100_percent.pak_51fe8383_838a_498d_a8ca_e776d246ea38" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\chrome_100_percent.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_chrome_200_percent.pak_f5cce658_7611_43fb_a52b_ae1ff22d4533" Guid="a6eb5315-876a-4cbb-b69d-1dac47a4b2aa" Win64="no">
+              <File Name="chrome_200_percent.pak" Id="_chrome_200_percent.pak_f5cce658_7611_43fb_a52b_ae1ff22d4533" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\chrome_200_percent.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_d3dcompiler_47.dll_12a7f030_f9d5_493d_a4e3_4fb2efe94c7a" Guid="d9e6d617-2577-43bb-b52a-897707a3049f" Win64="no">
+              <File Name="d3dcompiler_47.dll" Id="_d3dcompiler_47.dll_12a7f030_f9d5_493d_a4e3_4fb2efe94c7a" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\d3dcompiler_47.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_expressthermalelectron.exe_7f1ee09d_a23c_452f_be4b_f56c190958d4" Guid="a7bbfe2a-1e30-431c-aa7d-efe6cf52fa7a" Win64="no">
+              <File Name="expressthermalelectron.exe" Id="_expressthermalelectron.exe_7f1ee09d_a23c_452f_be4b_f56c190958d4" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\expressthermalelectron.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_ffmpeg.dll_44a37486_7a44_4f59_bb55_83ae72c71263" Guid="b21129b0-4eb2-4456-9e90-4a2a6ab7e1b7" Win64="no">
+              <File Name="ffmpeg.dll" Id="_ffmpeg.dll_44a37486_7a44_4f59_bb55_83ae72c71263" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\ffmpeg.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_icudtl.dat_1f86b181_8aa5_4a81_94e7_4b5d3f13171a" Guid="969f689e-5f0d-4406-9477-40c0383408f3" Win64="no">
+              <File Name="icudtl.dat" Id="_icudtl.dat_1f86b181_8aa5_4a81_94e7_4b5d3f13171a" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\icudtl.dat" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_libEGL.dll_201d9d32_5acb_4df1_8696_6a0c620248db" Guid="00a7a2b3-4b4d-4045-987e-aa53adaf7ee5" Win64="no">
+              <File Name="libEGL.dll" Id="_libEGL.dll_201d9d32_5acb_4df1_8696_6a0c620248db" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\libEGL.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_libGLESv2.dll_ae36fd4d_31f1_460d_bd7b_c2374c208500" Guid="6a13c40d-0f1d-462b-831e-cdd64e8479e3" Win64="no">
+              <File Name="libGLESv2.dll" Id="_libGLESv2.dll_ae36fd4d_31f1_460d_bd7b_c2374c208500" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\libGLESv2.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_resources.pak_e09b0f68_25d0_4633_9bd1_dabaaef4bd91" Guid="2e9af707-0176-4f75-a93d-030fe3a3fbda" Win64="no">
+              <File Name="resources.pak" Id="_resources.pak_e09b0f68_25d0_4633_9bd1_dabaaef4bd91" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\resources.pak" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_snapshot_blob.bin_8ca4a8c5_7ac4_43f3_8e12_9d8f15a7b2d7" Guid="6eaa0bbd-6f7b-4af3-bf12-fb9bb430baf3" Win64="no">
+              <File Name="snapshot_blob.bin" Id="_snapshot_blob.bin_8ca4a8c5_7ac4_43f3_8e12_9d8f15a7b2d7" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\snapshot_blob.bin" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_v8_context_snapshot.bin_d7160669_dda0_47f5_9b3f_63aaf3992c9d" Guid="e6651f6b-60a2-4ad2-bb38-64da95574e77" Win64="no">
+              <File Name="v8_context_snapshot.bin" Id="_v8_context_snapshot.bin_d7160669_dda0_47f5_9b3f_63aaf3992c9d" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\v8_context_snapshot.bin" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_version_d32e30b7_5e05_4024_80b5_1e94f8ba68de" Guid="6aee6100-054d-45a2-a79d-beffe7f2996c" Win64="no">
+              <File Name="version" Id="_version_d32e30b7_5e05_4024_80b5_1e94f8ba68de" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\version" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_vk_swiftshader.dll_098caa2a_8aed_4888_bd40_faa063852ad7" Guid="c3ee6e16-ea63-401b-8743-96eed1aae19c" Win64="no">
+              <File Name="vk_swiftshader.dll" Id="_vk_swiftshader.dll_098caa2a_8aed_4888_bd40_faa063852ad7" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\vk_swiftshader.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_vk_swiftshader_icd.json_5c3f30d5_874c_42e8_bf16_5dda016e4e4f" Guid="cea1c066-11f9-4d0b-89c4-0adad93368bc" Win64="no">
+              <File Name="vk_swiftshader_icd.json" Id="_vk_swiftshader_icd.json_5c3f30d5_874c_42e8_bf16_5dda016e4e4f" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\vk_swiftshader_icd.json" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+            <Component Id="_vulkan_1.dll_62bcec9e_865f_4dee_84cc_4e8f856124f0" Guid="64d72142-38ad-4522-87e5-aabe0466004d" Win64="no">
+              <File Name="vulkan-1.dll" Id="_vulkan_1.dll_62bcec9e_865f_4dee_84cc_4e8f856124f0" Source="C:\git_clones\expressThermalElectron\expressthermalelectron-win32-x64\vulkan-1.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+            </Component>
+          </Directory>
+          <Component Id="_expressthermalelectron.exe_6b421a09_87ac_4b78_852e_723352d476cc" Guid="fb4b7c52-ce91-4db2-b48a-f2c41475af4f" Win64="no">
+            <File Name="expressthermalelectron.exe" Id="_expressthermalelectron.exe_6b421a09_87ac_4b78_852e_723352d476cc" Source="C:\Users\Admin\AppData\Local\Temp\expressthermalelectrond5YIq7\expressthermalelectron.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+          </Component>
+          <Component Id="_.installInfo.json_d66b3550_4109_41bd_a01c_f5b346c31e98" Guid="22ca6700-9dfa-4d8c-ad59-74613146c41b" Win64="no">
+            <File Name=".installInfo.json" Id="_.installInfo.json_d66b3550_4109_41bd_a01c_f5b346c31e98" Source="C:\Users\Admin\AppData\Local\Temp\.installInfonLHw3M\.installInfo.json" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x86"/>
+          </Component>
+          <Component Id="RegistryInstallPath" Guid="5ee449eb-0e39-4343-a687-150091da59f5" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="InstallPath" Type="string" Value="[APPLICATIONROOTDIRECTORY]" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallDisplayName" Guid="2b0237c5-73df-45ad-8b82-89f5e15138e2" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="DisplayName" Type="string" Value="[VisibleProductName]" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallPublisher" Guid="a8019132-9651-46aa-ace5-bec56d228572" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="Publisher" Type="string" Value="La toque magique" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallDisplayVersion" Guid="9e6315c5-e0b6-4a63-8370-2682864f9d26" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="DisplayVersion" Type="string" Value="1.1.2" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallModifyString" Guid="abcd02a8-6ae0-4819-8f7e-6c355d8ea061" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="ModifyPath" Type="expandable" Value="MsiExec.exe /I {4D7EDBC0-1847-4371-BEA6-39553331A603}" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallString" Guid="f5e2538e-7108-422b-a232-61f66be6b40b" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="UninstallString" Type="expandable" Value="MsiExec.exe /X {4D7EDBC0-1847-4371-BEA6-39553331A603}" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+          <Component Id="UninstallDisplayIcon" Guid="04cf6855-5ea7-4b9b-96c4-83486c51fbc4" Win64="no">
+            <RegistryKey Root="HKMU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4D7EDBC0-1847-4371-BEA6-39553331A603}.msq" ForceCreateOnInstall="no" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="DisplayIcon" Type="expandable" Value="[SystemFolder]msiexec.exe" KeyPath="yes"/>
+            </RegistryKey>
+          </Component>
+        </Directory>
+      </Directory>
+
+      <!-- Desktop -->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+      <!-- Start Menu -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="La toque magique"/>
+      </Directory>
+    </Directory>
+
+    <!-- Step 3: Add app to Start Menu -->
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="f61d51f1-d8f9-4dc5-8605-27bad8fe199a" Win64="no">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="expressthermalelectronApp"
+                  Description="My amazing Kitten simulator"
+                  Target="[APPLICATIONROOTDIRECTORY]expressthermalelectron.exe"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY">
+          <ShortcutProperty Key="System.AppUserModel.ID" Value="com.squirrel.expressthermalelectronapp.expressthermalelectron"/>
+        </Shortcut>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU"
+                       Key="Software\Microsoft\expressthermalelectronApp"
+                       Name="installed"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+   <!-- Step 4: Add app desktop shortcut --> 
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="f4bda4e3-5afb-4a06-85f6-90dc54a04605" >
+          <Shortcut Id="MyDesktopShortcut"
+                    Name="expressthermalelectronApp"
+                    Description="My amazing Kitten simulator"
+                    Target="[APPLICATIONROOTDIRECTORY]expressthermalelectron.exe"
+                    WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+          <RegistryValue Root="HKCU"
+                    Key="Software\Microsoft\expressthermalelectronApp"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+
+    <!-- Lets cleanup any files that are were not part of the initial install
+    via this MSI. Such as newer versions installed by the auto-updater. -->
+    <DirectoryRef Id="APPLICATIONROOTDIRECTORY">
+      <Component Id="PurgeOnUninstall" Guid="6cbd550d-c3fc-4126-9df9-b9036fa596ea" Win64="no">
+        <CreateFolder/>
+        <util:RemoveFolderEx On="uninstall" Property="INSTALLPATH" />
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="Complete" Title="expressthermalelectronApp (1.1.2)" Description="The complete package." Display="expand" Level="1" >
+      <!-- Step 5: Tell WiX to install the files -->
+      <Feature Id="MainApplication" Title="Main Application" Level="1" Description="The main components to run the applications." >
+        <ComponentRef Id="_locales_am.pak_a45173ea_41d1_4641_b673_da6ba4913bd4" />
+        <ComponentRef Id="_locales_ar.pak_b58d44ed_dbf1_44c4_9219_ff9dc7708c3b" />
+        <ComponentRef Id="_locales_bg.pak_406afea7_6b3c_4205_9187_231b4478797e" />
+        <ComponentRef Id="_locales_bn.pak_53b69c37_473a_4122_a574_741cd4c5fe95" />
+        <ComponentRef Id="_locales_ca.pak_d9b69670_89eb_455c_bf54_bb68ad0bc5ae" />
+        <ComponentRef Id="_locales_cs.pak_2b45cada_859d_4e72_bf9c_d2bf720bcf22" />
+        <ComponentRef Id="_locales_da.pak_7ec3b97a_c6e5_4ec0_b002_2a470ae75045" />
+        <ComponentRef Id="_locales_de.pak_49358027_e1bc_42e4_8c71_9f927eaf3ce9" />
+        <ComponentRef Id="_locales_el.pak_e62fcf64_8026_4d42_95d7_b835cf842583" />
+        <ComponentRef Id="_locales_en_GB.pak_c27c2ff7_32ed_4cd6_8283_f2959aa39eaa" />
+        <ComponentRef Id="_locales_en_US.pak_9d1d80bb_1e69_442c_96dd_f10022a2142c" />
+        <ComponentRef Id="_locales_es_419.pak_40ec788b_333b_4fe5_8ef7_d34ae60f2859" />
+        <ComponentRef Id="_locales_es.pak_f539d662_6b44_4b68_b339_3e725ebeab5b" />
+        <ComponentRef Id="_locales_et.pak_6073f788_a680_43ae_a401_cec14b7ddca5" />
+        <ComponentRef Id="_locales_fa.pak_0100105a_f654_4487_9306_fc62f68675e6" />
+        <ComponentRef Id="_locales_fi.pak_e2522fe8_1381_4c4d_a2d6_ab36db021722" />
+        <ComponentRef Id="_locales_fil.pak_6d1105f2_52c3_47cb_ba7f_f08e05513597" />
+        <ComponentRef Id="_locales_fr.pak_bbef47ac_861e_4c46_9d2e_67ed266e38a7" />
+        <ComponentRef Id="_locales_gu.pak_7e1ce3e9_ae50_403c_b0a4_5563f727482b" />
+        <ComponentRef Id="_locales_he.pak_e1460cdb_98a3_483f_8335_23810d27460e" />
+        <ComponentRef Id="_locales_hi.pak_bf6c20ec_d59c_49be_a7d9_155cb00f4910" />
+        <ComponentRef Id="_locales_hr.pak_0ef467ba_3125_41e2_b41b_c37984d95d52" />
+        <ComponentRef Id="_locales_hu.pak_36141b0d_a377_43dc_aabf_fc8054bcafda" />
+        <ComponentRef Id="_locales_id.pak_9a70b088_a16f_49ed_b1be_988bc6d1144d" />
+        <ComponentRef Id="_locales_it.pak_5b543a73_4ea8_4a70_8988_35bd62b68604" />
+        <ComponentRef Id="_locales_ja.pak_d4c99cdb_1ea3_4dc4_929f_390a656ce508" />
+        <ComponentRef Id="_locales_kn.pak_7e7a5155_1964_4c1e_8184_6c8b80634ee1" />
+        <ComponentRef Id="_locales_ko.pak_d3dbc5e9_c508_46f1_bc80_c36972b57de2" />
+        <ComponentRef Id="_locales_lt.pak_af198ca2_f8fb_4b54_a039_39dd3d3508b8" />
+        <ComponentRef Id="_locales_lv.pak_a023db32_7a35_49ae_96f0_ebf566713f00" />
+        <ComponentRef Id="_locales_ml.pak_3ff5c591_8379_48ad_bd78_e7c2d6823cfc" />
+        <ComponentRef Id="_locales_mr.pak_c66edc6c_51ea_47a8_805d_624df4e79c0f" />
+        <ComponentRef Id="_locales_ms.pak_24713741_a5c6_4d2e_be2b_b32b69ba9ffe" />
+        <ComponentRef Id="_locales_nb.pak_cf5a0b48_dd8c_44a7_91df_b38a19e7ade7" />
+        <ComponentRef Id="_locales_nl.pak_4dc00565_731c_4d69_b438_d118f373f8a2" />
+        <ComponentRef Id="_locales_pl.pak_d72bc7d9_b505_4b61_bc58_b8c9b23d8d54" />
+        <ComponentRef Id="_locales_pt_BR.pak_7b677117_3346_471b_b356_2b891b080fa6" />
+        <ComponentRef Id="_locales_pt_PT.pak_da96687f_6fcc_4626_9ee0_2c67a37a2dff" />
+        <ComponentRef Id="_locales_ro.pak_4894da53_6936_49a1_93ba_046884113c7f" />
+        <ComponentRef Id="_locales_ru.pak_caf2b777_35f4_478a_bccf_c085ccfb17e0" />
+        <ComponentRef Id="_locales_sk.pak_747d0506_d28c_44bc_a41d_a4e7aaadc588" />
+        <ComponentRef Id="_locales_sl.pak_3c8e0ac9_c2a7_4a45_b221_b588fd38f930" />
+        <ComponentRef Id="_locales_sr.pak_a9077f9f_3e34_4885_91fe_7f0741f73024" />
+        <ComponentRef Id="_locales_sv.pak_b1717823_2f32_479f_9da4_b092e04a28ae" />
+        <ComponentRef Id="_locales_sw.pak_2744cad1_1652_4d33_b8e1_d20ba8fc80ae" />
+        <ComponentRef Id="_locales_ta.pak_c665d5d7_b426_4dd1_88c3_40d5006bc27f" />
+        <ComponentRef Id="_locales_te.pak_30b79719_6a96_4245_9b0c_d5d1edf260d0" />
+        <ComponentRef Id="_locales_th.pak_38bec22c_5611_4fc6_a7f5_c6f153acc04a" />
+        <ComponentRef Id="_locales_tr.pak_d0e33510_c177_41b6_8df3_9a9f0dd22787" />
+        <ComponentRef Id="_locales_uk.pak_8ea74855_9618_4835_8135_a1fc0a6db7ce" />
+        <ComponentRef Id="_locales_vi.pak_2a0ee1ee_5301_4c8e_a786_09a83d1b26e0" />
+        <ComponentRef Id="_locales_zh_CN.pak_38fab54a_de57_4343_8ebf_1cbf45693d55" />
+        <ComponentRef Id="_locales_zh_TW.pak_20fc158e_2eed_470a_aa1b_59ab4e7b942b" />
+        <ComponentRef Id="_expressThermalElectron.iml_17fa49f4_2cf6_4807_93e6_72b80ab60777" />
+        <ComponentRef Id="_resources_app_.idea_modules.xml_bcfaa0fc_19a7_4d22_9363_2c48a05d248f" />
+        <ComponentRef Id="_resources_app_.idea_vcs.xml_9c486f13_3296_4ace_b1ae_449a35beca74" />
+        <ComponentRef Id="_resources_app_.idea_workspace.xml_ca3baf2d_e5a2_41dd_9b70_27de83336b5d" />
+        <ComponentRef Id="_resources_app_index.html_2bccd3ca_171c_4c62_aaf0_dbc455193d87" />
+        <ComponentRef Id="_resources_app_main.js_f26a98a0_b8ab_4f49_b28e_95ed98a92c00" />
+        <ComponentRef Id="_resources_app_package.json_40f1c215_4805_47e2_a856_85138ecd1a67" />
+        <ComponentRef Id="_resources_app_preload.js_00251420_a718_43b6_b428_07b809b28aa3" />
+        <ComponentRef Id="_swiftshader_libEGL.dll_8023a9ce_b145_4b38_82d7_786cb848265f" />
+        <ComponentRef Id="_swiftshader_libGLESv2.dll_e033cfbe_77e5_4df5_b6a8_44ae38b988a4" />
+        <ComponentRef Id="_LICENSE_f3a6f2c6_9933_40f8_91ff_e2680fab85e2" />
+        <ComponentRef Id="_LICENSES.chromium.html_7151f1f9_9300_486b_8f68_2d692958d6f0" />
+        <ComponentRef Id="_chrome_100_percent.pak_51fe8383_838a_498d_a8ca_e776d246ea38" />
+        <ComponentRef Id="_chrome_200_percent.pak_f5cce658_7611_43fb_a52b_ae1ff22d4533" />
+        <ComponentRef Id="_d3dcompiler_47.dll_12a7f030_f9d5_493d_a4e3_4fb2efe94c7a" />
+        <ComponentRef Id="_expressthermalelectron.exe_7f1ee09d_a23c_452f_be4b_f56c190958d4" />
+        <ComponentRef Id="_ffmpeg.dll_44a37486_7a44_4f59_bb55_83ae72c71263" />
+        <ComponentRef Id="_icudtl.dat_1f86b181_8aa5_4a81_94e7_4b5d3f13171a" />
+        <ComponentRef Id="_libEGL.dll_201d9d32_5acb_4df1_8696_6a0c620248db" />
+        <ComponentRef Id="_libGLESv2.dll_ae36fd4d_31f1_460d_bd7b_c2374c208500" />
+        <ComponentRef Id="_resources.pak_e09b0f68_25d0_4633_9bd1_dabaaef4bd91" />
+        <ComponentRef Id="_snapshot_blob.bin_8ca4a8c5_7ac4_43f3_8e12_9d8f15a7b2d7" />
+        <ComponentRef Id="_v8_context_snapshot.bin_d7160669_dda0_47f5_9b3f_63aaf3992c9d" />
+        <ComponentRef Id="_version_d32e30b7_5e05_4024_80b5_1e94f8ba68de" />
+        <ComponentRef Id="_vk_swiftshader.dll_098caa2a_8aed_4888_bd40_faa063852ad7" />
+        <ComponentRef Id="_vk_swiftshader_icd.json_5c3f30d5_874c_42e8_bf16_5dda016e4e4f" />
+        <ComponentRef Id="_vulkan_1.dll_62bcec9e_865f_4dee_84cc_4e8f856124f0" />
+        <ComponentRef Id="_expressthermalelectron.exe_6b421a09_87ac_4b78_852e_723352d476cc" />
+        <ComponentRef Id="_.installInfo.json_d66b3550_4109_41bd_a01c_f5b346c31e98" />
+        <ComponentRef Id="RegistryInstallPath" />
+        <ComponentRef Id="UninstallDisplayName" />
+        <ComponentRef Id="UninstallPublisher" />
+        <ComponentRef Id="UninstallDisplayVersion" />
+        <ComponentRef Id="UninstallModifyString" />
+        <ComponentRef Id="UninstallString" />
+        <ComponentRef Id="UninstallDisplayIcon" />
+        <ComponentRef Id="ApplicationShortcut" />
+        <ComponentRef Id="DesktopShortcut" />
+        <ComponentRef Id="PurgeOnUninstall" />
+      </Feature> 
+    </Feature> 
+  </Product>
+</Wix>

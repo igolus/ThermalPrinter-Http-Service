@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ThermalPrinter Http Service</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="box">
+        <img class="imgText" src="./assets/laToqueText.svg"/>
+    </div>
+
+    <div class="box">
+        <a href="http://latoquemagique.com" target="_blank">
+            <img class="imgLog" src="./assets/laToqueLogo.svg"/>
+        </a>
+    </div>
+
+    <div class="box">
+        <img class="imgLog" src="./assets/printer_laserjet_21421.ico"/>
+    </div>
+
+    <div class="box">
+        <img class="imgBullet" id="bulletSend" src="./assets/Button-Blank-Yellow-icon.png">
+    </div>
+
+    <script>
+        const electron = require('electron');
+        const ipcRenderer = electron.ipcRenderer;
+
+        ipcRenderer.on('dataSending',(event,data) => {
+            document.getElementById('bulletSend').src = "./assets/Button-Blank-Green-icon.png";
+        });
+        ipcRenderer.on('dataEnd',(event,data) => {
+            document.getElementById('bulletSend').src = "./assets/Button-Blank-Yellow-icon.png";
+        });
+    </script>
+</body>
+</html>

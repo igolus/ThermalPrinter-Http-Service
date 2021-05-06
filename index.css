@@ -1,0 +1,40 @@
+html {
+    width: 100vw;
+    height: 100vh;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: auto;
+    width:100%;
+    height: 100%;
+    padding: 3%;
+    overflow: hidden;
+    background: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #222222;
+}
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 100px;
+    line-height: 0.95;
+    padding: 0 15px 0 15px;
+}
+.label {
+    font-size: 10px;
+    font-weight: 200;
+    color: #222222;
+}
+.imgLog {
+    max-height: 80px;
+}
+.imgText {
+    max-height: 50px;
+}
+.imgBullet {
+    max-height: 80px;
+}

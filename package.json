@@ -1,0 +1,43 @@
+{
+  "name": "ThermalPrinterService",
+  "productName": "ThermalPrinter Http Service",
+  "version": "1.0.0",
+  "description": "HTTP Service for printing on thermal printer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager .",
+    "build-installer": "electron-builder"
+  },
+  "build": {
+    "appId": "ThermalPrinterService",
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "license": "./license.txt",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "author": "Guillaume Rousseau",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^12.0.6",
+    "electron-packager": "^15.2.0",
+    "electron-wix-msi": "^3.2.0",
+    "exe-icon-extractor": "^1.0.8",
+    "electron-builder": "^22.11.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+
+    "esprima": "^4.0.1",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "node-thermal-printer": "^4.1.2"
+  }
+}
