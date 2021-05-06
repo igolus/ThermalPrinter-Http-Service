@@ -36,16 +36,21 @@ The url to target is : http://localhost:3005/printThermal
 
 Then you can define the content of you ticket using the body of the request example :
 
-`{`
-  `"data": {`
-    `"currentDate": "*{{currentDate}}*"`
-  `},`
-  `"headerScript" : "printer.bold(true)\n printer.println(data.currentDate)\n",`
-  `"bodyScript" : "printer.println(\"TEST\")\n",`
-  `"footerScript" : "printer.println(\"FOOTER\")\n",`
-  `"model": "EPSON",`
-  `"urlPrinter": "tcp://127.0.0.1:9100"`
-`}`
+~~~javascript
+```
+{
+  "data": {
+    "currentDate": "*{{currentDate}}*"
+  },
+  "headerScript" : "printer.bold(true)\n printer.println(data.currentDate)\n",
+  "bodyScript" : "printer.println(\"TEST\")\n",
+  "footerScript" : "printer.println(\"FOOTER\")\n",
+  "model": "EPSON",
+  "urlPrinter": "tcp://127.0.0.1:9100"
+}
+~~~
+
+
 
 ### data
 
@@ -72,14 +77,20 @@ The application will treat the content of the script in the order defined above.
 
 The content of each script is a javascript piece of code where you can use all the printer operations
 
-`printer.print("Hello World");                               // Append text`
-`printer.println("Hello World");                             // Append text with new line`
-`printer.openCashDrawer();                                   // Kick the cash drawer`
-`printer.cut();                                              // Cuts the paper (if printer only supports one mode use this)`
-`printer.partialCut();                                       // Cuts the paper leaving a small bridge in middle (if printer supports multiple cut modes)`
-`printer.beep();                                             // Sound internal beeper/buzzer (if available)`
-`printer.upsideDown(true);  
-....`
+```javascript
+printer.print("Hello World");                               // Append text
+printer.println("Hello World");                             // Append text with new line
+printer.openCashDrawer();                                   // Kick the cash drawer
+printer.cut();                                              // Cuts the paper (if printer only supports one mode use this)
+printer.partialCut();                                       // Cuts the paper leaving a small bridge in middle (if printer supports multiple cut modes)
+printer.beep();                                             // Sound internal beeper/buzzer (if available)
+printer.upsideDown(true);  
+....
+```
+
+
+
+
 
 See details [here](https://www.npmjs.com/package/node-thermal-printer)
 
