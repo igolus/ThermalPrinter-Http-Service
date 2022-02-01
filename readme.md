@@ -2,7 +2,9 @@
 
 Thermal-Printer-Http-Service is an application built with [electron](https://www.electronjs.org/). It provides an http service to print ticket on thermal printers like  Epson TM-M30 or Star TSP 143.
 
-The first motivation of this project is to enable interactions on thermal printers from a web application  
+The first motivation of this project is to enable interactions on thermal printers from a web application.
+
+This application is usefull with the project [la toque magique](https://latoquemagique.com/)
 
 ## Installation
 
